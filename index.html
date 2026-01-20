@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>League Match Companion</title>
+  <meta name="description" content="A desktop overlay for League of Legends that provides match context and personal performance tracking.">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a2e;
+      --border: #2a2a4e;
+      --text-primary: #e0e0e0;
+      --text-secondary: #888;
+      --accent: #c9aa71;
+      --accent-hover: #d4ba8a;
+      --blue: #0ac8b9;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--accent) 0%, #fff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 20px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .badge span {
+      color: var(--blue);
+    }
+
+    /* Screenshot */
+    .screenshot-section {
+      padding: 40px 0 80px;
+    }
+
+    .screenshot-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .screenshot-placeholder {
+      background: var(--bg-secondary);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 80px 40px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .screenshot-container img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    .screenshot-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg-primary);
+    }
+
+    .screenshot {
+      display: none;
+    }
+
+    .screenshot.active {
+      display: block;
+    }
+
+    .screenshot-caption {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .caption {
+      display: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .caption.active {
+      display: block;
+    }
+
+    /* Features */
+    .features {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 48px;
+      color: var(--accent);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Tech Stack */
+    .tech {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .tech h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+
+    .tech > p {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 48px;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .tech-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .tech-item h4 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .tech-item p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Status */
+    .status {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .status h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .status p {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      background: rgba(10, 200, 185, 0.1);
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .footer-links {
+      margin-bottom: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin: 0 16px;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .disclaimer {
+      font-size: 12px;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    .contact {
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .contact a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 32px;
+      }
+      .hero p {
+        font-size: 16px;
+      }
+      header .container {
+        flex-direction: column;
+        gap: 16px;
+      }
+      nav a {
+        margin: 0 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/" class="logo">League Match Companion</a>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#tech">Tech</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>League Match Companion</h1>
+        <p>A desktop overlay that provides match context when your game starts. Track your performance and make informed decisions.</p>
+        <div class="badge">Built with <span>Overwolf SDK</span> + <span>Riot Games API</span></div>
+      </div>
+    </section>
+
+    <section class="screenshot-section">
+      <div class="container">
+        <div class="screenshot-tabs">
+          <button class="tab-btn active" data-tab="live">Live Stats</button>
+          <button class="tab-btn" data-tab="history">Match History</button>
+          <button class="tab-btn" data-tab="dev">Dev Monitor</button>
+        </div>
+        <div class="screenshot-container">
+          <img id="screenshot-live" class="screenshot active" src="screenshots/live-stats.png" alt="Live stats overlay showing real-time player statistics, items, and CS differentials">
+          <img id="screenshot-history" class="screenshot" src="screenshots/match-history.png" alt="Match history view with recent games and performance data for all players">
+          <img id="screenshot-dev" class="screenshot" src="screenshots/dev-monitor.png" alt="Development monitor showing live events, game state, and overlay preview">
+        </div>
+        <div class="screenshot-caption">
+          <p id="caption-live" class="caption active">Real-time stats for all 10 players including items, gold, and CS differentials by lane</p>
+          <p id="caption-history" class="caption">Match history lookup showing recent ranked performance for context</p>
+          <p id="caption-dev" class="caption">Development view with live event stream, game state monitoring, and overlay preview</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="container">
+        <h2>Features</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <h3>Match History Lookup</h3>
+            <p>When your game starts, fetches recent ranked match data for all 10 players to provide context about the current game.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Champion Statistics</h3>
+            <p>See games played on current champion, average KDA, and CS/min trends for each player in the match.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Performance Tracking</h3>
+            <p>Track your own performance patterns across sessions—CS differentials, damage output, and positioning trends.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Post-Game Analysis</h3>
+            <p>Review item build timelines, gold progression curves, and detailed match breakdowns after each game.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Heatmap Visualization</h3>
+            <p>Visualize your positioning patterns across multiple games to identify areas for improvement.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Local Processing</h3>
+            <p>All data is processed locally on your machine. Nothing is stored externally or shared with third parties.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tech" id="tech">
+      <div class="container">
+        <h2>Built With</h2>
+        <p>Using officially sanctioned tools and APIs</p>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <h4>Overwolf SDK</h4>
+            <p>Approved overlay platform for League of Legends</p>
+          </div>
+          <div class="tech-item">
+            <h4>Riot Games API</h4>
+            <p>Official match data via ACCOUNT-V1 and MATCH-V5</p>
+          </div>
+          <div class="tech-item">
+            <h4>Data Dragon</h4>
+            <p>Static champion and item data with local caching</p>
+          </div>
+          <div class="tech-item">
+            <h4>Python Backend</h4>
+            <p>Secure server-side API key handling</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="status">
+      <div class="container">
+        <h2>Current Status</h2>
+        <p>This project is currently in development for personal use.</p>
+        <div class="status-badge">In Development</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+      <p class="disclaimer">
+        League Match Companion is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+      </p>
+      <p class="contact">
+        Contact: <a href="mailto:gabe@gtrev.dev">gabe@gtrev.dev</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.screenshot').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.caption').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('screenshot-' + tab).classList.add('active');
+        document.getElementById('caption-' + tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
